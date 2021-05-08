@@ -26,14 +26,14 @@ public class ExampleWsConfig {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ExampleWsConfig.class);
 
-    public static final String SBPS_AUTHENTICATOR_SSL_SOCKET_FACTORY_BEAN_NAME = "sbpsAuthenticatorSSLSocketFactory";
-    public static final String SBPS_AUTHENTICATOR_AUTHENTICATION_WS_CONFIG_BEAN_NAME = "sbpsAuthenticatorAuthenticationWsConfigBean";
-    public static final String SBPS_AUTHENTICATOR_WS_GENERIC_OBJECT_POOL_CONFIG_BEAN_NAME = "sbpsAuthenticatorWsGenericObjectPoolConfigBean";
-    public static final String SBPS_AUTHENTICATOR_WS_ABANDONED_CONFIG_BEAN_NAME = "sbpsAuthenticatorWsAbandonedConfigBean";
-    private static final String SBPS_AUTHENTICATOR_WS_SIGNATURE_KEYSTORE_BEAN_NAME = "sbpsAuthenticatorWsSignatureKeystoreBean";
-    private static final String SBPS_AUTHENTICATOR_WS_WS_SECURITY_HANDLER_BEAN_NAME = "sbpsAuthenticatorWsWsSecurityHandlerBean";
+    public static final String EXAMPLE_SSL_SOCKET_FACTORY_BEAN_NAME = "exampleSSLSocketFactory";
+    public static final String EXAMPLE_WS_CONFIG_BEAN_NAME = "exampleWsConfigBean";
+    public static final String EXAMPLE_WS_GENERIC_OBJECT_POOL_CONFIG_BEAN_NAME = "exampleWsGenericObjectPoolConfigBean";
+    public static final String EXAMPLE_WS_ABANDONED_CONFIG_BEAN_NAME = "exampleWsAbandonedConfigBean";
+    private static final String EXAMPLE_WS_SIGNATURE_KEYSTORE_BEAN_NAME = "exampleWsSignatureKeystoreBean";
+    private static final String EXAMPLE_WS_SECURITY_HANDLER_BEAN_NAME = "exampleWsSecurityHandlerBean";
 
-    public static final String SBPS_AUTHENTICATOR_AUTHENTICATION_WS_IMPL_BIN = "sbpsAuthenticatorAuthenticationWsImpl";
+    public static final String EXAMPLE_AUTHENTICATION_WS_IMPL_BIN = "exampleWsImpl";
 
     @Value("${examplews.endpoint}")
     private String endpointExampleWs;
@@ -60,9 +60,9 @@ public class ExampleWsConfig {
     @Value("#{'${examplews.ssl.ciphersuite}'.split(',')}")
     private List<String> sslCipherSuiteList;
 
-    @Value("${examplews.acstoken.ssl.keystore.path:}")
+    @Value("${examplews.ssl.keystore.path:}")
     private String sslKeyStorePath;
-    @Value("${examplews.acstoken.ssl.keystore.password:}")
+    @Value("${examplews.ssl.keystore.password:}")
     private String sslKeyStorePassword;
     @Value("${examplews.ssl.keystore.type:jks}")
     private String sslKeyStoreType;
@@ -85,7 +85,7 @@ public class ExampleWsConfig {
     @Value("${examplews.wssecurity.signature.keystore.type:jks}")
     private String signatureKeystoreType;
 
-    @Bean(name = SBPS_AUTHENTICATOR_SSL_SOCKET_FACTORY_BEAN_NAME)
+    @Bean(name = EXAMPLE_SSL_SOCKET_FACTORY_BEAN_NAME)
     public SSLSocketFactory getSSLSocketFactory() {
         try {
             KeystoreInfo sslKeystoreInfo = null;
@@ -113,7 +113,7 @@ public class ExampleWsConfig {
         }
     }
 
-    @Bean(SBPS_AUTHENTICATOR_WS_SIGNATURE_KEYSTORE_BEAN_NAME)
+    @Bean(EXAMPLE_WS_SIGNATURE_KEYSTORE_BEAN_NAME)
     public KeystoreInfo getSignatureKeystore() {
 
         return new KeystoreInfo(
@@ -124,9 +124,9 @@ public class ExampleWsConfig {
                 signatureKeystorePassword);
     }
 
-    @Bean(SBPS_AUTHENTICATOR_WS_WS_SECURITY_HANDLER_BEAN_NAME)
+    @Bean(EXAMPLE_WS_SECURITY_HANDLER_BEAN_NAME)
     public WSSecurityHandlerWithProcessor getWsSecurityHandler(
-            @Qualifier(SBPS_AUTHENTICATOR_WS_SIGNATURE_KEYSTORE_BEAN_NAME) KeystoreInfo outgoingSignatureKeystore) {
+            @Qualifier(EXAMPLE_WS_SIGNATURE_KEYSTORE_BEAN_NAME) KeystoreInfo outgoingSignatureKeystore) {
         //Definizione processor per aggiungere firma applicativa e cifratura in uscita
         ArrayList<SoapMessageProcessor> outgoingMessageProcessors = new ArrayList<>();
 
@@ -142,7 +142,7 @@ public class ExampleWsConfig {
 
     }
 
-    @Bean(SBPS_AUTHENTICATOR_WS_GENERIC_OBJECT_POOL_CONFIG_BEAN_NAME)
+    @Bean(EXAMPLE_WS_GENERIC_OBJECT_POOL_CONFIG_BEAN_NAME)
     public GenericObjectPoolConfig getGenericObjectPoolConfig() {
         GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
         genericObjectPoolConfig.setMaxTotal(connectionPoolMaxTotal);
@@ -158,7 +158,7 @@ public class ExampleWsConfig {
         return genericObjectPoolConfig;
     }
 
-    @Bean(SBPS_AUTHENTICATOR_WS_ABANDONED_CONFIG_BEAN_NAME)
+    @Bean(EXAMPLE_WS_ABANDONED_CONFIG_BEAN_NAME)
     public AbandonedConfig abandonedConfig() {
         AbandonedConfig abandonedConfig = new AbandonedConfig();
         abandonedConfig.setRemoveAbandonedTimeout(connectionRemoveAbandonedTimeout);
@@ -167,12 +167,12 @@ public class ExampleWsConfig {
         return abandonedConfig;
     }
 
-    @Bean(SBPS_AUTHENTICATOR_AUTHENTICATION_WS_CONFIG_BEAN_NAME)
+    @Bean(EXAMPLE_WS_CONFIG_BEAN_NAME)
     public ExampleWSConnectionConfig getExampleWSConnectionConfig(
-            @Qualifier(SBPS_AUTHENTICATOR_SSL_SOCKET_FACTORY_BEAN_NAME) SSLSocketFactory sslSocketFactory,
-            @Qualifier(SBPS_AUTHENTICATOR_WS_GENERIC_OBJECT_POOL_CONFIG_BEAN_NAME) GenericObjectPoolConfig genericObjectPoolConfig,
-            @Qualifier(SBPS_AUTHENTICATOR_WS_ABANDONED_CONFIG_BEAN_NAME) AbandonedConfig abandonedConfig,
-            @Qualifier(SBPS_AUTHENTICATOR_WS_WS_SECURITY_HANDLER_BEAN_NAME) WSSecurityHandlerWithProcessor wsSecurityHandlerWithProcessor) {
+            @Qualifier(EXAMPLE_SSL_SOCKET_FACTORY_BEAN_NAME) SSLSocketFactory sslSocketFactory,
+            @Qualifier(EXAMPLE_WS_GENERIC_OBJECT_POOL_CONFIG_BEAN_NAME) GenericObjectPoolConfig genericObjectPoolConfig,
+            @Qualifier(EXAMPLE_WS_ABANDONED_CONFIG_BEAN_NAME) AbandonedConfig abandonedConfig,
+            @Qualifier(EXAMPLE_WS_SECURITY_HANDLER_BEAN_NAME) WSSecurityHandlerWithProcessor wsSecurityHandlerWithProcessor) {
         ExampleWSConnectionConfig exampleWSConnectionConfig = new ExampleWSConnectionConfig();
         exampleWSConnectionConfig.setConnectionTimeout(connectionTimeout);
         exampleWSConnectionConfig.setRequestTimeout(requestTimeout);
@@ -183,18 +183,12 @@ public class ExampleWsConfig {
         // remove comment to activate sign
         exampleWSConnectionConfig.setWsSecurityHandlerWithProcessor(wsSecurityHandlerWithProcessor);
 
-//        if (logInterceptorEnabled) {
-//            exampleWSConnectionConfig.setSoapLoggingInfoHandler(new SOAPLoggingInfoHandler());
-//        }
         return exampleWSConnectionConfig;
     }
 
-    @Bean(SBPS_AUTHENTICATOR_AUTHENTICATION_WS_IMPL_BIN)
+    @Bean(EXAMPLE_AUTHENTICATION_WS_IMPL_BIN)
     public GreetingWsService getAuthenticationWs(
-            @Qualifier(SBPS_AUTHENTICATOR_AUTHENTICATION_WS_CONFIG_BEAN_NAME) ExampleWSConnectionConfig exampleWSConnectionConfig) {
+            @Qualifier(EXAMPLE_WS_CONFIG_BEAN_NAME) ExampleWSConnectionConfig exampleWSConnectionConfig) {
         return new ExampleWSImpl(exampleWSConnectionConfig);
     }
-
-
-
 }

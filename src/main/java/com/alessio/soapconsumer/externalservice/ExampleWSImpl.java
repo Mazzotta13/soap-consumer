@@ -5,6 +5,10 @@ import com.alessio.service.GreetingWsService;
 import com.alessio.service.GreetingWsServiceImplService;
 import com.alessio.soapconsumer.service.PooledService;
 import com.sun.xml.internal.ws.developer.JAXWSProperties;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.springframework.stereotype.Component;
 
 import javax.xml.ws.Binding;
@@ -28,10 +32,17 @@ public class ExampleWSImpl extends PooledService<GreetingWsService> implements G
         GreetingWsService port = new GreetingWsServiceImplService().getGreetingWsServiceImplPort();
 
         Map<String, Object> requestContext = ((BindingProvider) port).getRequestContext();
-        requestContext.put(JAXWSProperties.SSL_SOCKET_FACTORY, exampleWSConnectionConfig.getSslSocketFactory());
         requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, exampleWSConnectionConfig.getEndpoint());
-        requestContext.put(JAXWSProperties.CONNECT_TIMEOUT, exampleWSConnectionConfig.getConnectionTimeout());
-        requestContext.put(JAXWSProperties.REQUEST_TIMEOUT, exampleWSConnectionConfig.getRequestTimeout());
+
+        HTTPConduit conduit = (HTTPConduit) ClientProxy.getClient(port).getConduit();
+        TLSClientParameters tlsClientParameters = new TLSClientParameters();
+        tlsClientParameters.setSSLSocketFactory(exampleWSConnectionConfig.getSslSocketFactory());
+
+        HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+        httpClientPolicy.setConnectionTimeout(exampleWSConnectionConfig.getConnectionTimeout());
+        httpClientPolicy.setReceiveTimeout(exampleWSConnectionConfig.getRequestTimeout());
+        conduit.setClient(httpClientPolicy);
+        conduit.setTlsClientParameters(tlsClientParameters);
 
         Binding binding = ((BindingProvider) port).getBinding();
 

@@ -52,12 +52,25 @@
 			<version>3.0</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>com.alessio</groupId>
 			<artifactId>Ws-Example-API</artifactId>
 			<version>1.1-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http-hc</artifactId>
+			<version>3.4.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>3.4.3</version>
+		</dependency>
+
+
 
 	</dependencies>
 
